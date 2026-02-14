@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes shimmer {
+    0% { transform: translateX(-300%); }
+    100% { transform: translateX(400%); }
+}
+
+.animate-shimmer {
+    animation: shimmer 2.5s ease-in-out infinite;
+}
+
+@layer components {
+    /* Navigation dropdown */
+    .nav-dropdown {
+        @apply absolute top-full left-0 bg-white shadow-lg py-2 min-w-[220px] opacity-0 invisible
+               translate-y-2 transition-all duration-200 z-50;
+    }
+
+    .group:hover .nav-dropdown {
+        @apply opacity-100 visible translate-y-0;
+    }
+
+    .nav-dropdown a {
+        @apply block px-6 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors;
+    }
+}

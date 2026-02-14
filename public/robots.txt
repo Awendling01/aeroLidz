@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aerolidz.com/sitemap.xml
+
+Disallow: /login
+Disallow: /register
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /cart
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /confirm-password
