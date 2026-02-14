@@ -9,7 +9,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('payment_method')->after('payment_status')->nullable();
             $table->string('ach_transaction_id')->nullable();
             $table->timestamp('payment_due_date')->nullable();
             $table->timestamp('payment_completed_at')->nullable();
@@ -24,7 +23,7 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->dropColumn([
-                'payment_method', 'ach_transaction_id', 'payment_due_date',
+                'ach_transaction_id', 'payment_due_date',
                 'payment_completed_at', 'late_fee', 'reminder_sent',
                 'reminder_sent_at', 'payment_notes'
             ]);

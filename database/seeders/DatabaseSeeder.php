@@ -15,11 +15,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create test users
+        User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@aerolidz.com',
+            'password' => bcrypt('password'),
+        ]);
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Test Customer',
+            'email' => 'customer@example.com',
+            'password' => bcrypt('password'),
         ]);
+
+        // Seed products with real images
+        $this->call([
+            ProductSeeder::class,
+        ]);
+
+        $this->command->info('✅ Database seeded successfully!');
+        $this->command->info('👤 Admin: admin@aerolidz.com / password');
+        $this->command->info('👤 Customer: customer@example.com / password');
     }
 }

@@ -70,6 +70,14 @@ class Product extends Model
     }
 
     /**
+     * Get the order items for the product.
+     */
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    /**
      * Scope a query to only include active products.
      */
     public function scopeActive($query)

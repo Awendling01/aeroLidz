@@ -120,11 +120,37 @@
                         </div>
                     </div>
 
-                    <!-- Right side: login + cart -->
+                    <!-- Right side: login + cart + admin menu -->
                     <div class="flex items-center gap-4">
-                        <Link href="/login" class="hidden md:block text-sm text-dark hover:text-primary transition-colors">
+                        <!-- Auth Links -->
+                        <div v-if="$page.props.auth.user" class="hidden md:flex items-center gap-4">
+                            <Link 
+                                v-if="$page.props.auth.user.isAdmin" 
+                                href="/admin" 
+                                class="text-sm text-dark hover:text-primary transition-colors font-semibold"
+                            >
+                                Admin Dashboard
+                            </Link>
+                            <Link 
+                                href="/profile" 
+                                class="text-sm text-dark hover:text-primary transition-colors"
+                            >
+                                {{ $page.props.auth.user.name }}
+                            </Link>
+                            <Link 
+                                href="/logout" 
+                                method="post" 
+                                as="button"
+                                class="text-sm text-dark hover:text-primary transition-colors"
+                            >
+                                Logout
+                            </Link>
+                        </div>
+                        <Link v-else href="/login" class="hidden md:block text-sm text-dark hover:text-primary transition-colors">
                             Log in
                         </Link>
+                        
+                        <!-- Cart Button -->
                         <button @click="cartOpen = !cartOpen" class="relative p-2">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
@@ -136,6 +162,93 @@
                                 {{ cartCount }}
                             </span>
                         </button>
+
+                        <!-- Admin Menu (only for admins on admin pages) -->
+                        <div v-if="$page.props.auth.user?.isAdmin && $page.url.startsWith('/admin')" class="relative">
+                            <button 
+                                @click="adminMenuOpen = !adminMenuOpen"
+                                class="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                            >
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                                </svg>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <transition
+                                enter-active-class="transition ease-out duration-200"
+                                enter-from-class="opacity-0 scale-95"
+                                enter-to-class="opacity-100 scale-100"
+                                leave-active-class="transition ease-in duration-150"
+                                leave-from-class="opacity-100 scale-100"
+                                leave-to-class="opacity-0 scale-95"
+                            >
+                                <div 
+                                    v-if="adminMenuOpen"
+                                    @click.away="adminMenuOpen = false"
+                                    class="absolute right-0 mt-2 w-72 bg-gradient-to-br from-gray-900 to-black rounded-xl shadow-2xl border border-gray-700 py-3 z-50 overflow-hidden"
+                                >
+                                    <!-- Header with gradient -->
+                                    <div class="px-5 py-3 border-b border-gray-700 bg-gradient-to-r from-primary/20 to-transparent">
+                                        <p class="font-oswald text-sm font-bold text-white uppercase tracking-wider">Admin Reports</p>
+                                    </div>
+                                    
+                                    <div class="py-2">
+                                        <Link href="/admin" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200 group">
+                                            <svg class="w-4 h-4 text-primary group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                            </svg>
+                                            Dashboard
+                                        </Link>
+                                        <Link href="/admin/users" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200 group">
+                                            <svg class="w-4 h-4 text-primary group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                            </svg>
+                                            Users
+                                        </Link>
+                                        <Link href="/admin/purchases-by-user" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200 group">
+                                            <svg class="w-4 h-4 text-primary group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                            </svg>
+                                            Purchases by User
+                                        </Link>
+                                        <Link href="/admin/financial" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200 group">
+                                            <svg class="w-4 h-4 text-primary group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Financial Reports
+                                        </Link>
+                                        <Link href="/admin/subscriptions" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200 group">
+                                            <svg class="w-4 h-4 text-primary group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                            </svg>
+                                            Subscriptions
+                                        </Link>
+                                        <Link href="/admin/payments" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200 group">
+                                            <svg class="w-4 h-4 text-primary group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                            </svg>
+                                            Payments & Past Due
+                                        </Link>
+                                        <Link href="/admin/analytics" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200 group">
+                                            <svg class="w-4 h-4 text-primary group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                            </svg>
+                                            Site Analytics
+                                        </Link>
+                                    </div>
+                                    
+                                    <div class="border-t border-gray-700 mt-2 pt-2">
+                                        <Link href="/" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-400 hover:bg-white/5 hover:text-white transition-all duration-200 group">
+                                            <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                                            </svg>
+                                            Back to Site
+                                        </Link>
+                                    </div>
+                                </div>
+                            </transition>
+                        </div>
                     </div>
                 </nav>
 
@@ -186,7 +299,29 @@
                                     <Link href="/returns" class="block text-sm py-1 text-gray-600">Return Center</Link>
                                 </div>
                             </div>
-                            <Link href="/login" class="block py-3 font-oswald uppercase tracking-widest text-sm">Log in</Link>
+                            
+                            <!-- Mobile Auth Links -->
+                            <div v-if="$page.props.auth.user" class="border-t pt-3 space-y-2">
+                                <Link 
+                                    v-if="$page.props.auth.user.isAdmin" 
+                                    href="/admin" 
+                                    class="block py-2 font-oswald uppercase tracking-widest text-sm text-primary font-bold"
+                                >
+                                    Admin Dashboard
+                                </Link>
+                                <Link href="/profile" class="block py-2 font-oswald uppercase tracking-widest text-sm">
+                                    Profile ({{ $page.props.auth.user.name }})
+                                </Link>
+                                <Link 
+                                    href="/logout" 
+                                    method="post" 
+                                    as="button"
+                                    class="block py-2 font-oswald uppercase tracking-widest text-sm text-red-600"
+                                >
+                                    Logout
+                                </Link>
+                            </div>
+                            <Link v-else href="/login" class="block py-3 font-oswald uppercase tracking-widest text-sm">Log in</Link>
                         </div>
                     </div>
                 </Transition>
@@ -206,6 +341,7 @@ const cartCount = ref(0);
 const shopOpen = ref(false);
 const learnOpen = ref(false);
 const supportOpen = ref(false);
+const adminMenuOpen = ref(false);
 
 // Announcement banner
 const bannerVisible = ref(true);

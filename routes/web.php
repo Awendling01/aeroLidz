@@ -37,13 +37,29 @@ Route::delete('/cart', [CartController::class, 'clear'])->name('cart.clear');
 // ==========================================
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect()->route('admin.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// ==========================================
+// ADMIN ROUTES
+// ==========================================
+
+use App\Http\Controllers\AdminController;
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::get('/purchases-by-user', [AdminController::class, 'purchasesByUser'])->name('purchases-by-user');
+    Route::get('/financial', [AdminController::class, 'financial'])->name('financial');
+    Route::get('/subscriptions', [AdminController::class, 'subscriptions'])->name('subscriptions');
+    Route::get('/payments', [AdminController::class, 'payments'])->name('payments');
+    Route::get('/analytics', [AdminController::class, 'analytics'])->name('analytics');
 });
 
 require __DIR__.'/auth.php';
