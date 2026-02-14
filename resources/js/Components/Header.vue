@@ -125,13 +125,6 @@
                         <!-- Auth Links -->
                         <div v-if="$page.props.auth.user" class="hidden md:flex items-center gap-4">
                             <Link 
-                                v-if="$page.props.auth.user.isAdmin" 
-                                href="/admin" 
-                                class="text-sm text-dark hover:text-primary transition-colors font-semibold"
-                            >
-                                Admin Dashboard
-                            </Link>
-                            <Link 
                                 href="/profile" 
                                 class="text-sm text-dark hover:text-primary transition-colors"
                             >
@@ -164,7 +157,7 @@
                         </button>
 
                         <!-- Admin Menu (only for admins on admin pages) -->
-                        <div v-if="$page.props.auth.user?.isAdmin && $page.url.startsWith('/admin')" class="relative">
+                        <div v-if="$page.props.auth.user?.isAdmin" class="relative">
                             <button 
                                 @click="adminMenuOpen = !adminMenuOpen"
                                 class="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
